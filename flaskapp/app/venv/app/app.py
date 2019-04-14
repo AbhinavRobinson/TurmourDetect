@@ -1,6 +1,7 @@
 from flask_sqlalchemy import SQLAlchemy
 from io import BytesIO
 from flask import Flask, render_template, request, send_file
+import os
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///filestorage.db'
@@ -21,6 +22,9 @@ def upload():
     newFile = FileContents(name = file.filename, data=file.read())
     db.session.add(newFile)
     db.session.commit()
+    #file data stored in db
+    #now saved to temp IN_FOLDER
+    file.save(os.path.join(app.config['IN_FOLDER'], file.filename))
     return 'Saved '+ file.filename + ' to the database!'
 
 @app.route('/download', methods=['POST'])
